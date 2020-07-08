@@ -9,6 +9,10 @@ import pickle
 import os.path
 
 
+def check_lunch_time(start, end):
+    return True
+
+
 def get_today_events_from_google_calendar():
     SCOPES = ['https://www.googleapis.com/auth/calendar']
     creds = None
@@ -44,13 +48,17 @@ def get_today_events_from_google_calendar():
 if __name__ == '__main__':
     events = get_today_events_from_google_calendar()
 
-    staff_txt = open("staffs.txt", 'w')
-    staffs = staff_txt.readlines()
+    staff_txt = open("staffs.txt", 'r')
+    staffs_origin = staff_txt.readlines()
+    staffs = []
 
-   if not events:
-        print('No upcoming events found.')
+    for staff in staffs_origin:
+        staff = staff.strip('\n')
+        staffs.append("본 " + staff)
+        staffs.append(staff)
+
     for event in events:
-        print(event)
-        # start = event['start'].get('dateTime', event['start'].get('date'))
-        # end = event['end'].get('dateTime', event['end'].get('date'))
-        # print(start, end, event['summary'])
+        if event['summary'] in staffs:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            end = event['end'].get('dateTime', event['end'].get('date'))
+            print(start, end, event['summary'])
