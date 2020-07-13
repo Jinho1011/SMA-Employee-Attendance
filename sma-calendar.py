@@ -38,7 +38,7 @@ def get_today_events_from_google_calendar():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 '.config/credentials-calendar.json', SCOPES)
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_local_server(port=3030)
         with open('.config/token-calendar.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
