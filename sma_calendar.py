@@ -10,6 +10,9 @@ import pickle
 import os.path
 
 
+def get_calendar_service():
+
+
 def check_staff(staffs, keyword):
     # check keyword is in staffs list
     for staff in staffs:
@@ -59,6 +62,9 @@ def get_today_events_from_google_calendar():
     return events
 
 
+def main():
+
+
 if __name__ == '__main__':
     events = get_today_events_from_google_calendar()
 
@@ -68,6 +74,7 @@ if __name__ == '__main__':
     staffs = []  # List
     staff_manage = []  # List
 
+    # remove "space" from string
     for staff in staffs_origin:
         staff = staff.strip('\n').strip()
         staffs.append(staff)
