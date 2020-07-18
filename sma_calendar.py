@@ -11,25 +11,6 @@ import os.path
 
 
 def get_calendar_service():
-
-
-def check_staff(staffs, keyword):
-    # check keyword is in staffs list
-    for staff in staffs:
-        if keyword.find(staff) >= 0:
-            return True
-    return False
-
-
-def check_lunch_time(start, end, work_hour):
-    if work_hour > 4:
-        if start.hour < 12 and end.hour > 1:
-            return True
-    else:
-        return False
-
-
-def get_today_events_from_google_calendar():
     SCOPES = ['https://www.googleapis.com/auth/calendar']
     creds = None
     if os.path.exists('.config/token-calendar.pickle'):
@@ -44,9 +25,27 @@ def get_today_events_from_google_calendar():
             creds = flow.run_local_server(port=3030)
         with open('.config/token-calendar.pickle', 'wb') as token:
             pickle.dump(creds, token)
-
     service = build('calendar', 'v3', credentials=creds)
+    return service.events()
 
+
+def check_staff(staffs, keyword):
+    # check keyword is in staffs list
+    for staff in staffs:
+        if keyword.find(staff) >= 0:
+            return True
+    return False
+
+
+def check_lunch_time(start, end, work_hour, is_bon):
+    if work_hour > 4 and is_bon:
+        if start.hour < 12 and end.hour > 1:
+            return True
+    else:
+        return False
+
+
+def get_today_events_from_google_calendar():
     today = date.today()
     from_ = datetime(today.year, today.month, today.day, 0, 0, 0,
                      tzinfo=timezone.utc).isoformat()
@@ -63,9 +62,7 @@ def get_today_events_from_google_calendar():
 
 
 def main():
-
-
-if __name__ == '__main__':
+    calendar = get_calendar_service()
     events = get_today_events_from_google_calendar()
 
     staff_txt = open("staffs.txt", 'r')
@@ -100,7 +97,7 @@ if __name__ == '__main__':
                 staff_json["staff_name"] = event['summary']
                 staff_json["working_hours"] = work_hours
                 staff_json["is_lunch_included"] = check_lunch_time(
-                    start, end, work_hours)
+                    start, end, work_hours, is_bon)
                 staff_manage.append(staff_json)
 
             elif event['summary'].endswith("휴게"):
@@ -125,3 +122,7 @@ if __name__ == '__main__':
 
     for staff in staff_manage:
         print(staff)
+
+
+if __name__ == '__main__':
+    main()
