@@ -36,9 +36,8 @@ def get_sheets_service():
 
 def get_wage(sheet, sheet_id):
     SPREADSHEET_RANGE = TODAY_SHEET + '!G2'
-    SPREADSHEET_ID = sheet_id
 
-    result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
+    result = sheet.values().get(spreadsheetId=sheet_id,
                                 range=SPREADSHEET_RANGE).execute()
     value = result.get('values', [])
 
@@ -55,7 +54,7 @@ def get_today_range():
 def write_today_wage(sheet, sheet_id, wage, hour):
     day = date.today().day
     TODAY_RANGE = TODAY_SHEET + '!I' + str(day + 5)
-    hourly_wage = format(int(wage) * hour, ',')
+    hourly_wage = format(int(int(wage) * hour), ',')
 
     body = {
         'values': [
@@ -72,12 +71,12 @@ def main():
     get_today_range()
 
     for staff in STAFF:
-        print(staff)
-
-    wage = get_wage(sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8')
-    hour = 7
-    # write_today_wage(
-    #     sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', wage, hour)
+        if staff["staff_name"] == "전진호 조교":
+            print(staff)
+            url = staff["staff_sheet_url"]
+            wage = get_wage(sheet, url)
+            hour = staff["staff_total_work_hour"]
+            write_today_wage(sheet, url, wage, hour)
 
 
 if __name__ == '__main__':
