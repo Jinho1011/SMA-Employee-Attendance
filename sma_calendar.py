@@ -65,6 +65,20 @@ def check_lunch_time(start, end, work_hour, is_head_office):
         return False
 
 
+def check_staff_list(summary, list):
+    # list 안의 summary에서 (본)과 (스)로 끝나고, list 안에 존재하면 True
+    if summary.endswith("(본)"):
+        staff_name = summary.split("(본)")[0]
+    else:
+        staff_name = summary.split("(스)")[0]
+
+    for keyword in list:
+        if staff_name == keyword:
+            return True
+
+    return None
+
+
 def main():
     calendar = get_calendar_service()
     events = get_today_events_from_google_calendar(calendar)
@@ -73,39 +87,39 @@ def main():
     # Implement Today STAFF List
     for event in events:
         event_summary = event["summary"]
-        if event_summary.endswith("(본)") or event_summary.endswith("(스)"):
-            STAFF_MEMBER = {}
+        if check_staff_list(event_summary, STAFF_LIST):
+            if event_summary.endswith("(본)") or event_summary.endswith("(스)"):
+                STAFF_MEMBER = {}
 
-            # staff_name & is_head_office
-            if event_summary.endswith("(본)"):
-                STAFF_MEMBER["staff_name"] = event_summary.split("(본)")[0]
-                STAFF_MEMBER["is_head_office"] = True
-            elif event_summary.endswith("(스)"):
-                STAFF_MEMBER["staff_name"] = event_summary.split("(스)")[0]
-                STAFF_MEMBER["is_head_office"] = False
+                # staff_name & is_head_office
+                if event_summary.endswith("(본)"):
+                    STAFF_MEMBER["staff_name"] = event_summary.split("(본)")[0]
+                    STAFF_MEMBER["is_head_office"] = True
+                elif event_summary.endswith("(스)"):
+                    STAFF_MEMBER["staff_name"] = event_summary.split("(스)")[0]
+                    STAFF_MEMBER["is_head_office"] = False
 
-            # staff_work_hour
-            work_start = parse(event['start']['dateTime'])
-            work_end = parse(event['end']['dateTime'])
-            work_hour = (work_end-work_start).seconds / 3600
-            STAFF_MEMBER["staff_work_hour"] = work_hour
+                # staff_work_hour
+                work_start = parse(event['start']['dateTime'])
+                work_end = parse(event['end']['dateTime'])
+                work_hour = (work_end-work_start).seconds / 3600
+                STAFF_MEMBER["staff_work_hour"] = work_hour
 
-            # is_lunch_included
-            STAFF_MEMBER["is_lunch_included"] = check_lunch_time(
-                work_start, work_end, work_hour, STAFF_MEMBER["is_head_office"])
+                # is_lunch_included
+                STAFF_MEMBER["is_lunch_included"] = check_lunch_time(
+                    work_start, work_end, work_hour, STAFF_MEMBER["is_head_office"])
 
-            STAFF.append(STAFF_MEMBER)
+                STAFF.append(STAFF_MEMBER)
+            elif event_summary.endswith("휴게"):
+                # staff_break_hour
+                break_start = parse(event['start']['dateTime'])
+                break_end = parse(event['end']['dateTime'])
+                break_hour = (break_end-break_start).seconds / 3600
+                break_staff_name = staff_name.split("휴게")[0].strip()
 
-        elif event_summary.endswith("휴게"):
-            # staff_break_hour
-            break_start = parse(event['start']['dateTime'])
-            break_end = parse(event['end']['dateTime'])
-            break_hour = (break_end-break_start).seconds / 3600
-            break_staff_name = staff_name.split("휴게")[0].strip()
-
-            for staff in STAFF:
-                if staff["staff_name"] == staff_name:
-                    staff["staff_break_hour"] = break_hour
+                for staff in STAFF:
+                    if staff["staff_name"] == staff_name:
+                        staff["staff_break_hour"] = break_hour
 
     # Get Total Work Hour For All Staffs
     for staff in STAFF:
