@@ -42,7 +42,7 @@ def get_wage(sheet, sheet_id):
     return re.sub("[^0-9]", "", value[0][0][8:])
 
 
-if __name__ == '__main__':
+def main():
     sheet = get_sheets_service()
 
     wage = get_wage(sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8')
@@ -57,3 +57,7 @@ if __name__ == '__main__':
     # }
     # result = sheet.values().update(
     #     spreadsheetId=SPREADSHEET_ID, range=SPREADSHEET_RANGE, body=body, valueInputOption='RAW').execute()
+
+
+if __name__ == '__main__':
+    main()

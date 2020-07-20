@@ -109,6 +109,9 @@ def main():
                 STAFF_MEMBER["is_lunch_included"] = check_lunch_time(
                     work_start, work_end, work_hour, STAFF_MEMBER["is_head_office"])
 
+                # set staff_break_hour to 0
+                STAFF_MEMBER["staff_break_hour"] = 0
+
                 STAFF.append(STAFF_MEMBER)
             elif event_summary.endswith("휴게"):
                 # staff_break_hour
@@ -123,7 +126,9 @@ def main():
 
     # Get Total Work Hour For All Staffs
     for staff in STAFF:
-        print(staff)
+        staff["staff_total_work_hour"] = staff["staff_work_hour"] - \
+            (1 if staff["is_lunch_included"] else 0) - \
+            staff["staff_break_hour"]
 
     return STAFF
 
