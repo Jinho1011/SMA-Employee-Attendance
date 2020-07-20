@@ -72,11 +72,16 @@ def main():
 
     for staff in STAFF:
         if staff["staff_name"] == "전진호 조교":
-            print(staff)
             url = staff["staff_sheet_url"]
             wage = get_wage(sheet, url)
             hour = staff["staff_total_work_hour"]
+
+            # write staffs' today wage
             write_today_wage(sheet, url, wage, hour)
+
+            # write point
+
+            # write food expense
 
 
 if __name__ == '__main__':
