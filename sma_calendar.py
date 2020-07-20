@@ -57,6 +57,18 @@ def get_staff_list():
     return STAFF_LIST
 
 
+def get_sheet_urls_list():
+    STAFF_TXT_FILE = open("staffs_url.txt", 'r')
+    STAFF_LIST_ORIGIN = STAFF_TXT_FILE.readlines()
+
+    STAFF_LIST = []
+
+    for s in STAFF_LIST_ORIGIN:
+        s = s.strip('\n').strip()
+        STAFF_LIST.append(s)
+    return STAFF_LIST
+
+
 def check_lunch_time(start, end, work_hour, is_head_office):
     if work_hour > 4 and is_head_office:
         if start.hour < 12 and end.hour > 1:
@@ -83,6 +95,7 @@ def main():
     calendar = get_calendar_service()
     events = get_today_events_from_google_calendar(calendar)
     STAFF_LIST = get_staff_list()
+    STAFF_URL_LIST = get_sheet_urls_list()
 
     # Implement Today STAFF List
     for event in events:
@@ -124,11 +137,12 @@ def main():
                     if staff["staff_name"] == staff_name:
                         staff["staff_break_hour"] = break_hour
 
-    # Get Total Work Hour For All Staffs
+    # Get Total Work Hour For All Staffs and Sheet URL
     for staff in STAFF:
         staff["staff_total_work_hour"] = staff["staff_work_hour"] - \
             (1 if staff["is_lunch_included"] else 0) - \
             staff["staff_break_hour"]
+        staff["staff_sheet_url"] = get_sheet_url(staff["staff_name"])
 
     return STAFF
 

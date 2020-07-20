@@ -8,6 +8,9 @@ import os.path
 import re
 import sma_calendar
 
+TODAY_SHEET = ''
+STAFF = sma_calendar.main()
+
 
 def get_sheets_service():
     SCOPES = ['https://www.googleapis.com/auth/drive',
@@ -32,31 +35,49 @@ def get_sheets_service():
 
 
 def get_wage(sheet, sheet_id):
-    SPREADSHEET_RANGE = '2007!G2:I2'
+    SPREADSHEET_RANGE = TODAY_SHEET + '!G2'
     SPREADSHEET_ID = sheet_id
 
     result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
                                 range=SPREADSHEET_RANGE).execute()
     value = result.get('values', [])
 
-    return re.sub("[^0-9]", "", value[0][0][8:])
+    return re.sub("[^0-9]", "", value[0][0][5:])
+
+
+def get_today_range():
+    today = date.today()
+    global TODAY_SHEET
+    TODAY_SHEET = str(today.year)[
+        2:] + '0'+str(today.month) if today.month < 10 else str(today.month)
+
+
+def write_today_wage(sheet, sheet_id, wage, hour):
+    day = date.today().day
+    TODAY_RANGE = TODAY_SHEET + '!I' + str(day + 5)
+    hourly_wage = format(int(wage) * hour, ',')
+
+    body = {
+        'values': [
+            [hourly_wage]
+        ]
+    }
+
+    result = sheet.values().update(
+        spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
 
 
 def main():
     sheet = get_sheets_service()
+    get_today_range()
+
+    for staff in STAFF:
+        print(staff)
 
     wage = get_wage(sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8')
-    print(wage)
-
-    # SPREADSHEET_RANGE = '2007!G21:I21'
-    # SPREADSHEET_ID = '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8'
-    # body = {
-    #     'values': [
-    #         ["TEST"]
-    #     ]
-    # }
-    # result = sheet.values().update(
-    #     spreadsheetId=SPREADSHEET_ID, range=SPREADSHEET_RANGE, body=body, valueInputOption='RAW').execute()
+    hour = 7
+    # write_today_wage(
+    #     sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', wage, hour)
 
 
 if __name__ == '__main__':
