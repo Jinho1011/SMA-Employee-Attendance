@@ -32,7 +32,7 @@ def get_sheets_service():
 
 
 def get_wage(sheet, sheet_id):
-    SPREADSHEET_RANGE = '2007!C2'
+    SPREADSHEET_RANGE = '2007!G2:I2'
     SPREADSHEET_ID = sheet_id
 
     result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
@@ -46,11 +46,13 @@ if __name__ == '__main__':
     sheet = get_sheets_service()
 
     wage = get_wage(sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8')
+    print(wage)
 
-    # SPREADSHEET_RANGE = '2007!I21'
+    # SPREADSHEET_RANGE = '2007!G21:I21'
+    # SPREADSHEET_ID = '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8'
     # body = {
     #     'values': [
-    #         [""]
+    #         ["TEST"]
     #     ]
     # }
     # result = sheet.values().update(
