@@ -10,16 +10,6 @@ import pickle
 import os.path
 
 STAFF = []
-# STAFF = [
-#     {
-#         "staff_name": "전진호",
-#         "staff_work_hour": 7,
-#         "staff_break_hour": 0,
-#         "is_head_office": True,
-#         "is_lunch_included": True
-#          최종 근무 시간은 staff_work_hour - staff_break_hour - (0 if is_lunch_included else 1) 이다
-#     }
-# ]
 
 
 def get_calendar_service():
@@ -80,11 +70,13 @@ def main():
     events = get_today_events_from_google_calendar(calendar)
     STAFF_LIST = get_staff_list()
 
+    # Implement Today STAFF List
     for event in events:
         event_summary = event["summary"]
         if event_summary.endswith("(본)") or event_summary.endswith("(스)"):
             STAFF_MEMBER = {}
-            # staff_name
+
+            # staff_name & is_head_office
             if event_summary.endswith("(본)"):
                 STAFF_MEMBER["staff_name"] = event_summary.split("(본)")[0]
                 STAFF_MEMBER["is_head_office"] = True
@@ -102,55 +94,24 @@ def main():
             STAFF_MEMBER["is_lunch_included"] = check_lunch_time(
                 work_start, work_end, work_hour, STAFF_MEMBER["is_head_office"])
 
-            print(STAFF_MEMBER)
+            STAFF.append(STAFF_MEMBER)
 
         elif event_summary.endswith("휴게"):
-            pass
             # staff_break_hour
+            break_start = parse(event['start']['dateTime'])
+            break_end = parse(event['end']['dateTime'])
+            break_hour = (break_end-break_start).seconds / 3600
+            break_staff_name = staff_name.split("휴게")[0].strip()
 
-    # for event in events:
-    #     if check_staff(staffs, event['summary']):
-    #         if event['summary'].endswith("조교"):
-    #             staff_json = {}
+            for staff in STAFF:
+                if staff["staff_name"] == staff_name:
+                    staff["staff_break_hour"] = break_hour
 
-    #             # 출근, 퇴근 시간
-    #             start = parse(event['start']['dateTime'])
-    #             end = parse(event['end']['dateTime'])
+    # Get Total Work Hour For All Staffs
+    for staff in STAFF:
+        print(staff)
 
-    #             # 근무 시간
-    #             work_hours = (end-start).seconds / 3600
-
-    #             # 본사 유무
-    #             if event['summary'].startswith("본"):
-    #                 staff_name = event['summary'][2:]
-    #             else:
-    #                 staff_name = event['summary']
-
-    #             staff_json["staff_name"] = event['summary']
-    #             staff_json["working_hours"] = work_hours
-    #             staff_json["is_lunch_included"] = check_lunch_time(
-    #                 start, end, work_hours, is_bon)
-    #             staff_manage.append(staff_json)
-
-    #         elif event['summary'].endswith("휴게"):
-    #             # 휴게 시작, 종료 시간
-    #             start = parse(event['start']['dateTime'])
-    #             end = parse(event['end']['dateTime'])
-
-    #             # 근무 시간
-    #             break_hours = (end-start).seconds / 3600
-
-    #             # 본사 유무
-    #             if event['summary'].startswith("본"):
-    #                 staff_name = event['summary'][2:]
-    #             else:
-    #                 staff_name = event['summary']
-
-    #             staff_name = staff_name.split("휴게")[0].strip()
-
-    #             for staff_json in staff_manage:
-    #                 if staff_json["staff_name"] == staff_name:
-    #                     staff_json["break_hours"] = break_hours
+    return STAFF
 
 
 if __name__ == '__main__':
