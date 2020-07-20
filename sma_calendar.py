@@ -142,8 +142,8 @@ def main():
         staff["staff_total_work_hour"] = staff["staff_work_hour"] - \
             (1 if staff["is_lunch_included"] else 0) - \
             staff["staff_break_hour"]
-        staff["staff_sheet_url"] = get_sheet_url(staff["staff_name"])
-
+        staff["staff_sheet_url"] = STAFF_URL_LIST[STAFF_LIST.index(
+            staff["staff_name"])]
     return STAFF
 
 
