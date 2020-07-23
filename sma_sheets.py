@@ -12,9 +12,7 @@ import logging.handlers
 
 # Record Range Here
 RANGE_WAGE = 'C2'
-RANGE_MEAL = ''
 RAGNE_STATUTORY_LEISURE_PAY = ''
-RANGE_POINT = ''
 
 STAFF = sma_calendar.main()
 TODAY_SHEET = ''
@@ -122,6 +120,7 @@ def write_content(sheet, sheet_id, range, content):
 
 def manage_staff_wage(sheet):
     for staff in STAFF:
+        print(staff)
         url = staff["staff_sheet_url"]
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
@@ -139,7 +138,7 @@ def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    # manage_staff_wage(sheet)
+    manage_staff_wage(sheet)
 
     # manage_staff_point(sheet)
 
