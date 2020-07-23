@@ -8,8 +8,11 @@ import os.path
 import re
 import sma_calendar
 
-TODAY_SHEET = ''
+# Range
+RANGE_WAGE = 'G2'
+
 STAFF = sma_calendar.main()
+TODAY_SHEET = ''
 
 
 def get_sheets_service():
@@ -35,7 +38,7 @@ def get_sheets_service():
 
 
 def get_wage(sheet, sheet_id):
-    SPREADSHEET_RANGE = TODAY_SHEET + '!G2'
+    SPREADSHEET_RANGE = TODAY_SHEET + '!' + RANGE_WAGE
 
     result = sheet.values().get(spreadsheetId=sheet_id,
                                 range=SPREADSHEET_RANGE).execute()
@@ -66,22 +69,24 @@ def write_today_wage(sheet, sheet_id, wage, hour):
         spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
 
 
+def manage_staff_wage():
+    for staff in STAFF:
+        url = staff["staff_sheet_url"]
+        wage = get_wage(sheet, url)
+        hour = staff["staff_total_work_hour"]
+
+        write_today_wage(sheet, url, wage, hour)
+
+
 def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    for staff in STAFF:
-        if staff["staff_name"] == "전진호 조교":
-            url = staff["staff_sheet_url"]
-            wage = get_wage(sheet, url)
-            hour = staff["staff_total_work_hour"]
+    manage_staff_wage()
 
-            # write staffs' today wage
-            write_today_wage(sheet, url, wage, hour)
+    # write point
 
-            # write point
-
-            # write food expense
+    # write food expense
 
 
 if __name__ == '__main__':
