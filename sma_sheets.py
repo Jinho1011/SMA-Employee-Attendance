@@ -8,8 +8,11 @@ import os.path
 import re
 import sma_calendar
 
-# Range
+# Record Range Here
 RANGE_WAGE = 'G2'
+RANGE_MEAL = ''
+RAGNE_STATUTORY_LEISURE_PAY = ''
+RANGE_POINT = ''
 
 STAFF = sma_calendar.main()
 TODAY_SHEET = ''
