@@ -72,6 +72,18 @@ def write_today_wage(sheet, sheet_id, wage, hour):
         spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
 
 
+def write_content(sheet, sheet_id, range, content):
+    body = {
+        'values': [
+            [content]
+        ]
+    }
+
+    result = sheet.values().update(
+        spreadsheetId=sheet_id, range=range, body=body, valueInputOption='RAW').execute()
+    print(result)
+
+
 def manage_staff_wage():
     for staff in STAFF:
         url = staff["staff_sheet_url"]
@@ -85,11 +97,14 @@ def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    manage_staff_wage()
+    # manage_staff_wage()
 
     # write point
 
     # write food expense
+
+    # If you want to insert, use this!
+    # # # # # write_content(sheet, sheet_id, range, content)
 
 
 if __name__ == '__main__':
