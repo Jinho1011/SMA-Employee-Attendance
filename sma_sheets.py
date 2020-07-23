@@ -9,7 +9,7 @@ import re
 import sma_calendar
 
 # Record Range Here
-RANGE_WAGE = 'G2'
+RANGE_WAGE = 'C2'
 RANGE_MEAL = ''
 RAGNE_STATUTORY_LEISURE_PAY = ''
 RANGE_POINT = ''
@@ -84,20 +84,21 @@ def write_content(sheet, sheet_id, range, content):
     print(result)
 
 
-def manage_staff_wage():
+def manage_staff_wage(sheet):
     for staff in STAFF:
+        print(staff)
         url = staff["staff_sheet_url"]
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
 
-        write_today_wage(sheet, url, wage, hour)
+        # write_today_wage(sheet, url, wage, hour)
 
 
 def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    # manage_staff_wage()
+    manage_staff_wage(sheet)
 
     # write point
 
