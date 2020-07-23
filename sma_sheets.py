@@ -40,6 +40,13 @@ def get_sheets_service():
     return service.spreadsheets()
 
 
+def get_today_range():
+    today = date.today()
+    global TODAY_SHEET
+    TODAY_SHEET = str(today.year)[
+        2:] + '0'+str(today.month) if today.month < 10 else str(today.month)
+
+
 def get_wage(sheet, sheet_id):
     SPREADSHEET_RANGE = TODAY_SHEET + '!' + RANGE_WAGE
 
@@ -48,13 +55,6 @@ def get_wage(sheet, sheet_id):
     value = result.get('values', [])
 
     return re.sub("[^0-9]", "", value[0][0][5:])
-
-
-def get_today_range():
-    today = date.today()
-    global TODAY_SHEET
-    TODAY_SHEET = str(today.year)[
-        2:] + '0'+str(today.month) if today.month < 10 else str(today.month)
 
 
 def write_today_wage(sheet, sheet_id, wage, hour):
@@ -86,11 +86,11 @@ def write_content(sheet, sheet_id, range, content):
 
 def manage_staff_wage(sheet):
     for staff in STAFF:
-        print(staff)
         url = staff["staff_sheet_url"]
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
 
+        print(staff["staff_name"], wage, hour)
         # write_today_wage(sheet, url, wage, hour)
 
 
