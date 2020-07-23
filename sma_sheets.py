@@ -90,6 +90,23 @@ def write_today_wage(sheet, sheet_id, wage, hour):
     write_log(result)
 
 
+def write_point(sheet, sheet_id):
+    day = date.today().day
+    TODAY_RANGE = TODAY_SHEET + '!D' + str(day + 5)
+    point = '1,000'
+
+    body = {
+        'values': [
+            [point]
+        ]
+    }
+
+    result = sheet.values().update(
+        spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
+    result["content"] = point
+    write_log(result)
+
+
 def write_content(sheet, sheet_id, range, content):
     body = {
         'values': [
@@ -109,8 +126,13 @@ def manage_staff_wage(sheet):
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
 
-        print(staff["staff_name"], wage, hour)
-        # write_today_wage(sheet, url, wage, hour)
+        write_today_wage(sheet, url, wage, hour)
+
+
+def manage_staff_point(sheet):
+    for staff in STAFF:
+        url = staff["staff_sheet_url"]
+        write_point(sheet, url)
 
 
 def main():
@@ -119,13 +141,11 @@ def main():
 
     # manage_staff_wage(sheet)
 
-    # write point
-
-    # write food expense
+    # manage_staff_point(sheet)
 
     # If you want to insert, use this!
-    write_content(
-        sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', '2007!C4', 'logging')
+    # write_content(
+    #     sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', '2007!C4', 'logging')
 
 
 if __name__ == '__main__':
