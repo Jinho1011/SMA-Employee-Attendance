@@ -7,6 +7,8 @@ import pickle
 import os.path
 import re
 import sma_calendar
+import logging
+import logging.handlers
 
 # Record Range Here
 RANGE_WAGE = 'C2'
@@ -16,6 +18,20 @@ RANGE_POINT = ''
 
 STAFF = sma_calendar.main()
 TODAY_SHEET = ''
+
+
+def write_log(result):
+    logger = logging.getLogger(__name__)
+    formatter = logging.Formatter(
+        '[%(asctime)s][%(levelname)s|%(filename)s:%(lineno)s] >> %(message)s')
+
+    fileHandler = logging.FileHandler('./result.log')
+    fileHandler.setFormatter(formatter)
+
+    logger.addHandler(fileHandler)
+
+    logger.setLevel(level=logging.DEBUG)
+    logger.debug(result)
 
 
 def get_sheets_service():
@@ -70,6 +86,8 @@ def write_today_wage(sheet, sheet_id, wage, hour):
 
     result = sheet.values().update(
         spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
+    result["content"] = hourly_wage
+    write_log(result)
 
 
 def write_content(sheet, sheet_id, range, content):
@@ -81,7 +99,8 @@ def write_content(sheet, sheet_id, range, content):
 
     result = sheet.values().update(
         spreadsheetId=sheet_id, range=range, body=body, valueInputOption='RAW').execute()
-    print(result)
+    result["content"] = content
+    write_log(result)
 
 
 def manage_staff_wage(sheet):
@@ -98,14 +117,15 @@ def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    manage_staff_wage(sheet)
+    # manage_staff_wage(sheet)
 
     # write point
 
     # write food expense
 
     # If you want to insert, use this!
-    # # # # # write_content(sheet, sheet_id, range, content)
+    write_content(
+        sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', '2007!C4', 'logging')
 
 
 if __name__ == '__main__':
