@@ -26,6 +26,9 @@ def write_log(result):
     fileHandler = logging.FileHandler('./result.log')
     fileHandler.setFormatter(formatter)
 
+    if (logger.hasHandlers()):
+        logger.handlers.clear()
+
     logger.addHandler(fileHandler)
 
     logger.setLevel(level=logging.DEBUG)
@@ -71,21 +74,23 @@ def get_wage(sheet, sheet_id):
     return re.sub("[^0-9]", "", value[0][0][5:])
 
 
-def write_today_wage(sheet, sheet_id, wage, hour):
+def write_today_wage(sheet, sheet_id, wage, hour, is_head):
     day = date.today().day
-    TODAY_RANGE = TODAY_SHEET + '!I' + str(day + 5)
+    TODAY_RANGE = TODAY_SHEET + '!G' + str(day + 5)
     hourly_wage = format(int(int(wage) * hour), ',')
+    content = ['본' if is_head else '', hour, hourly_wage]
 
     body = {
         'values': [
-            [hourly_wage]
+            content
         ]
     }
 
-    result = sheet.values().update(
-        spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
-    result["content"] = hourly_wage
-    write_log(result)
+    # result = sheet.values().update(
+    #     spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
+    # result["content"] = content
+
+    write_log(content)
 
 
 def write_point(sheet, sheet_id):
@@ -108,7 +113,7 @@ def write_point(sheet, sheet_id):
 def write_content(sheet, sheet_id, range, content):
     body = {
         'values': [
-            [content]
+            content
         ]
     }
 
@@ -124,8 +129,9 @@ def manage_staff_wage(sheet):
         url = staff["staff_sheet_url"]
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
+        is_head = staff["is_head_office"]
 
-        write_today_wage(sheet, url, wage, hour)
+        write_today_wage(sheet, url, wage, hour, is_head)
 
 
 def manage_staff_point(sheet):
@@ -144,7 +150,7 @@ def main():
 
     # If you want to insert, use this!
     # write_content(
-    #     sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', '2007!C4', 'logging')
+    #     sheet, '1ZQETW0R8bbfSdH-PELVUCl-4D5KUGQ6wpQkqwdUqcm8', '2007!I29', [''])
 
 
 if __name__ == '__main__':
