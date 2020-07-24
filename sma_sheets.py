@@ -151,7 +151,7 @@ def main():
 
     manage_staff_wage(sheet)
 
-    # manage_staff_point(sheet)
+    manage_staff_point(sheet)
 
     # If you want to insert, use this!
     # write_content(
