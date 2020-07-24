@@ -86,11 +86,11 @@ def write_today_wage(sheet, sheet_id, wage, hour, is_head):
         ]
     }
 
-    # result = sheet.values().update(
-    #     spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
-    # result["content"] = content
+    result = sheet.values().update(
+        spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='USER_ENTERED').execute()
+    result["content"] = content
 
-    write_log(content)
+    write_log(result)
 
 
 def write_point(sheet, sheet_id):
