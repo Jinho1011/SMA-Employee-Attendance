@@ -19,6 +19,11 @@ TODAY_SHEET = ''
 
 
 def write_log(result):
+    logg_json = {
+        "id": result["spreadsheetId"],
+        "range": result["updatedRange"],
+        "content": result["content"]
+    }
     logger = logging.getLogger(__name__)
     formatter = logging.Formatter(
         '[%(asctime)s][%(levelname)s|%(filename)s:%(lineno)s] >> %(message)s')
@@ -32,7 +37,7 @@ def write_log(result):
     logger.addHandler(fileHandler)
 
     logger.setLevel(level=logging.DEBUG)
-    logger.debug(result)
+    logger.debug(logg_json)
 
 
 def get_sheets_service():
