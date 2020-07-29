@@ -138,11 +138,8 @@ def main():
                 for staff in STAFF:
                     if staff["staff_name"] == staff_name:
                         staff["staff_break_hour"] = break_hour
-            elif event_summary.startswith("식사"):
-                # staff_lunch
-                pass
 
-                # Get Total Work Hour For All Staffs and Sheet URL
+    # Get Total Work Hour For All Staffs and Sheet URL
     for staff in STAFF:
         staff["staff_total_work_hour"] = staff["staff_work_hour"] - \
             (1 if staff["is_lunch_included"] else 0) - \

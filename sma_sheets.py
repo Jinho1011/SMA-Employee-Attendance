@@ -115,6 +115,23 @@ def write_point(sheet, sheet_id):
     write_log(result)
 
 
+def write_food_expense(sheet, sheet_id):
+    day = date.today().day
+    TODAY_RANGE = TODAY_SHEET + '!J' + str(day + 5)
+    food_expense = '6,000'
+
+    body = {
+        'values': [
+            ['식대', '', food_expense]
+        ]
+    }
+
+    result = sheet.values().update(
+        spreadsheetId=sheet_id, range=TODAY_RANGE, body=body, valueInputOption='RAW').execute()
+    result["content"] = food_expense
+    write_log(result)
+
+
 def write_content(sheet, sheet_id, range, content):
     body = {
         'values': [
@@ -145,16 +162,21 @@ def manage_staff_point(sheet):
         write_point(sheet, url)
 
 
+def manage_staff_food_expense(sheet):
+    for staff in STAFF:
+        url = staff["staff_sheet_url"]
+        write_food_expense(sheet, url)
+
+
 def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    for s in STAFF:
-        print(s)
+    manage_staff_wage(sheet)
 
-    # manage_staff_wage(sheet)
+    manage_staff_point(sheet)
 
-    # manage_staff_point(sheet)
+    manage_staff_food_expense(sheet)
 
     # If you want to insert, use this!
     # write_content(
