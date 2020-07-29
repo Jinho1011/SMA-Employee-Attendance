@@ -77,14 +77,16 @@ def check_lunch_time(start, end, work_hour, is_head_office):
         return False
 
 
-def check_staff_list(summary, list):
+def check_staff_list(summary, KEY_LIST):
     # list 안의 summary에서 (본)과 (스)로 끝나고, list 안에 존재하면 True
     if summary.endswith("(본)"):
         staff_name = summary.split("(본)")[0]
     else:
         staff_name = summary.split("(스)")[0]
 
-    for keyword in list:
+    staff_name = staff_name.strip()
+
+    for keyword in KEY_LIST:
         if staff_name == keyword:
             return True
 
@@ -136,14 +138,17 @@ def main():
                 for staff in STAFF:
                     if staff["staff_name"] == staff_name:
                         staff["staff_break_hour"] = break_hour
+            elif event_summary.startswith("식사"):
+                # staff_lunch
+                pass
 
-    # Get Total Work Hour For All Staffs and Sheet URL
+                # Get Total Work Hour For All Staffs and Sheet URL
     for staff in STAFF:
         staff["staff_total_work_hour"] = staff["staff_work_hour"] - \
             (1 if staff["is_lunch_included"] else 0) - \
             staff["staff_break_hour"]
         staff["staff_sheet_url"] = STAFF_URL_LIST[STAFF_LIST.index(
-            staff["staff_name"])]
+            staff["staff_name"].strip())]
     return STAFF
 
 

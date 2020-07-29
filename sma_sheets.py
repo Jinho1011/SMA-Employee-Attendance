@@ -149,9 +149,12 @@ def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    manage_staff_wage(sheet)
+    for s in STAFF:
+        print(s)
 
-    manage_staff_point(sheet)
+    # manage_staff_wage(sheet)
+
+    # manage_staff_point(sheet)
 
     # If you want to insert, use this!
     # write_content(
