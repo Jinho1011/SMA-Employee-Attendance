@@ -79,11 +79,31 @@ def get_wage(sheet, sheet_id):
     return re.sub("[^0-9]", "", value[0][0][5:])
 
 
+def write_sheet(sheet, url, wage, hour, is_head, is_lunch_included):
+    day = date.today().day
+    TODAY_RANGE = TODAY_SHEET + '!D' + str(day + 5)
+    hourly_wage = format(int(int(wage) * hour), ',')
+    content = ['1,000', '', '', '본' if is_head else '',
+               hour, hourly_wage, '식대' if is_lunch_included else '', '', '6,000' if is_lunch_included else '']
+
+    body = {
+        'values': [
+            content
+        ]
+    }
+
+    result = sheet.values().update(
+        spreadsheetId=url, range=TODAY_RANGE, body=body, valueInputOption='USER_ENTERED').execute()
+    result["content"] = content
+
+    write_log(result)
+
+
 def write_today_wage(sheet, sheet_id, wage, hour, is_head):
     day = date.today().day
     TODAY_RANGE = TODAY_SHEET + '!G' + str(day + 5)
     hourly_wage = format(int(int(wage) * hour), ',')
-    content = ['본' if is_head else '', hour, hourly_wage]
+    wage_content = ['본' if is_head else '', hour, hourly_wage]
 
     body = {
         'values': [
@@ -147,7 +167,6 @@ def write_content(sheet, sheet_id, range, content):
 
 def manage_staff_wage(sheet):
     for staff in STAFF:
-        print(staff)
         url = staff["staff_sheet_url"]
         wage = get_wage(sheet, url)
         hour = staff["staff_total_work_hour"]
@@ -168,15 +187,28 @@ def manage_staff_food_expense(sheet):
         write_food_expense(sheet, url)
 
 
+def manage_all(sheet):
+    for staff in STAFF:
+        print(staff)
+        url = staff["staff_sheet_url"]
+        wage = get_wage(sheet, url)
+        hour = staff["staff_total_work_hour"]
+        is_head = staff["is_head_office"]
+        is_lunch_included = staff["is_lunch_included"]
+        write_sheet(sheet, url, wage, hour, is_head, is_lunch_included)
+
+
 def main():
     sheet = get_sheets_service()
     get_today_range()
 
-    manage_staff_wage(sheet)
+    # manage_staff_wage(sheet)
 
-    manage_staff_point(sheet)
+    # manage_staff_point(sheet)
 
-    manage_staff_food_expense(sheet)
+    # manage_staff_food_expense(sheet)
+
+    manage_all(sheet)
 
     # If you want to insert, use this!
     # write_content(
