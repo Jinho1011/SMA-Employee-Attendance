@@ -52,20 +52,20 @@ def get_staff_list():
     STAFF_LIST = []
 
     for s in STAFF_LIST_ORIGIN:
-        s = s.strip('\n').strip()
-        STAFF_LIST.append(s)
+        s = s.split(':')[0]
+        STAFF_LIST.append(s.strip())
     return STAFF_LIST
 
 
 def get_sheet_urls_list():
-    STAFF_TXT_FILE = open("staffs_url.txt", 'r')
+    STAFF_TXT_FILE = open("staffs.txt", 'r')
     STAFF_LIST_ORIGIN = STAFF_TXT_FILE.readlines()
 
     STAFF_LIST = []
 
     for s in STAFF_LIST_ORIGIN:
-        s = s.strip('\n').strip()
-        STAFF_LIST.append(s)
+        s = s.split(':')[1]
+        STAFF_LIST.append(s.strip())
     return STAFF_LIST
 
 
